@@ -1,1 +1,138 @@
-// TODO
+.container {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+
+  > img {
+    width: 40rem;
+    height: 40rem;
+    margin-bottom: 10rem;
+  }
+
+  article {
+    width: 100%;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 0 2rem;
+
+    h1 {
+      font-size: 5rem;
+      font-weight: bold;
+      line-height: 6rem;
+      text-align: left;
+      color: var(--white);
+    }
+
+    section {
+      display: flex;
+      align-items: center;
+      margin-top: 3rem;
+      margin-bottom: 2rem;
+
+      time, p {
+        display: flex;
+        align-items: center;
+        color: var(--gray-300);
+        font-size: 1.4rem;
+        line-height: 1.7rem;
+
+        svg {
+          width: 20px;
+          height: 20px;
+          margin-right: 1rem;
+        }
+
+      }
+
+      p {
+        margin: 0 2.4rem;
+
+        &:last-child {
+          margin: 0;
+        }
+      }
+    }
+
+    small {
+      display: inline-block;
+      color: var(--gray-300);
+      font-size: 1.4rem;
+      line-height: 2rem;
+      font-style: italic;
+      margin-bottom: 6rem;
+    }
+
+    div {
+      & + div {
+        margin: 3.6rem 0;
+      }
+
+      h2 {
+        font-size: 3.6rem;
+        font-weight: bold;
+        line-height: 5.004rem;
+        text-align: left;
+        color: var(--white);
+        margin-bottom: 3.6rem;
+      }
+
+      div {
+        ul, ol {
+          & + p {
+            margin-top: 1.8rem;
+          }
+        }
+
+        p + ol {
+          margin-top: 1.8rem;
+        }
+
+        li {
+          & + li {
+            margin-top: 1.8rem;
+          }
+
+          @media (max-width: 767px) {
+            &::marker {
+              font-size: 1.3rem;
+            }
+          }
+        }
+
+        p, li {
+          font-size: 1.8rem;
+          font-weight: normal;
+          line-height: 2.52rem;
+          text-align: justify;
+          word-break: break-word;
+          color: var(--gray-200);
+
+          & + p, & + ul {
+            margin-top: 1.8rem;
+          }
+
+          strong {
+            font-weight: bold;
+          }
+
+          a {
+            color: var(--pink-500);
+            transition: filter 0.2s;
+
+            &:hover {
+              filter: brightness(0.8);
+            }
+          }
+
+          img {
+            display: block;
+            width: 100%;
+            height: auto;
+            margin: 0 auto;
+          }
+
+        }
+      }
+    }
+  }
+}
