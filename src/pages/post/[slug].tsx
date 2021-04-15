@@ -10,6 +10,7 @@ import ptBR from 'date-fns/locale/pt-BR';
 import { getPrismicClient } from '../../services/prismic';
 import { estimatedReadingTime, formattedDataPrismicContent } from '../../../utils/prismicFormattedData';
 import Header from '../../components/Header';
+import Comment from '../../components/Comment';
 import styles from './post.module.scss';
 
 interface Post {
@@ -32,10 +33,22 @@ interface Post {
 
 interface PostProps {
   post: Post;
+  preview: boolean;
+  nextPost: {
+    title: string;
+    uid: string;
+  };
+  prevPost: {
+    title: string;
+    uid: string;
+  };
 }
 
 export default function Post({
   post,
+  preview,
+  nextPost,
+  prevPost,
 }: PostProps): JSX.Element {
   const route = useRouter();
 
@@ -74,6 +87,20 @@ export default function Post({
             </p>
           </section>
 
+          {post.last_publication_date ? (
+            <small>
+              {format(
+                new Date(post.last_publication_date),
+                "'* editado em' dd LLL yyyy', às 'HH:mm",
+                {
+                  locale: ptBR,
+                }
+              )}
+            </small>
+          ) : (
+            <small />
+          )}
+
           {post.data.content.map(({ heading, body }) => (
             <div key={heading}>
               <h2>{heading}</h2>
@@ -84,6 +111,39 @@ export default function Post({
           ))}
         </article>
 
+        <div className={styles.barraDivisoria} />
+
+        <div className={styles.paginacao}>
+          {prevPost ? (
+            <section className={styles.prevPost}>
+              <p>{prevPost.title}</p>
+              <Link href={`/post/${prevPost.uid}`}>
+                <a>Post anterior</a>
+              </Link>
+            </section>
+          ) : (
+            <section />
+          )}
+
+          {nextPost ? (
+            <section>
+              <p>{nextPost.title}</p>
+              <Link href={`/post/${nextPost.uid}`}>
+                <a>Próximo post</a>
+              </Link>
+            </section>
+          ) : (
+            <section />
+          )}
+        </div>
+
+        <Comment />
+
+        {preview && (
+          <Link href="/api/exit-preview">
+            <a className={styles.botaoPreview}>Sair do modo Preview</a>
+          </Link>
+        )}
       </main>
     </>
   );
@@ -111,14 +171,52 @@ export const getStaticPaths: GetStaticPaths = async () => {
 
 export const getStaticProps: GetStaticProps = async ({
   params,
+  preview = false,
+  previewData,
 }) => {
   const { slug } = params;
 
   const prismic = getPrismicClient();
 
-  const response = await prismic.getByUID('posts', String(slug), {});
+  const response = await prismic.getByUID('posts', String(slug), {
+    ref: previewData?.ref ?? null,
+  });
 
-  const props = formattedDataPrismicContent(response);
+  const nextPost = await prismic.query(
+    [Prismic.predicates.at('document.type', 'posts')],
+    {
+      pageSize: 1,
+      orderings: '[document.first_publication_date desc]',
+      after: response.id,
+    }
+  );
+
+  const prevPost = await prismic.query(
+    Prismic.predicates.at('document.type', 'posts'),
+    {
+      pageSize: 1,
+      after: response.id,
+      orderings: '[document.first_publication_date]',
+    }
+  );
+
+  const props = formattedDataPrismicContent(response, {
+    preview,
+    nextPost:
+      nextPost.results.length > 0
+        ? {
+            uid: nextPost.results[0].uid,
+            title: nextPost.results[0]?.data?.title,
+          }
+        : null,
+    prevPost:
+      prevPost.results.length > 0
+        ? {
+            uid: prevPost.results[0].uid,
+            title: prevPost.results[0]?.data?.title,
+          }
+        : null,
+  });
 
   return {
     props,

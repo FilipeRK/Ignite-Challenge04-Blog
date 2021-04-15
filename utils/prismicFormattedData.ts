@@ -13,7 +13,19 @@ interface IFormattedDataPrismicResume {
   };
 }
 
-interface IFormattedDataPrismicContent {
+interface IOptions {
+  nextPost: {
+    uid: string;
+    title: string;
+  } | null;
+  prevPost: {
+    uid: string;
+    title: string;
+  } | null;
+  preview: boolean;
+}
+
+interface IFormattedDataPrismicContent extends IOptions {
   post: {
     first_publication_date: string;
     last_publication_date: string;
@@ -69,7 +81,8 @@ export const formattedDataPrismicResume = (
 };
 
 export const formattedDataPrismicContent = (
-  post: Document
+  post: Document,
+  options: IOptions
 ): IFormattedDataPrismicContent => {
   const postFormatted = {
     uid: post.uid,
@@ -91,5 +104,6 @@ export const formattedDataPrismicContent = (
 
   return {
     post: postFormatted,
+    ...options,
   };
 };
