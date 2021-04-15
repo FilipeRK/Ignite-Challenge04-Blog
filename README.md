@@ -60,7 +60,7 @@ Para executar o aplicativo na web, siga as instruções do seu terminal:
 - Depois disso, execute `yarn dev` para executar o aplicativo, que será aberto no endereço `localhost:3000`
 <br>
 
-# Picture of runing application
+# Imagens da aplicação em execução
 - Página inicial (Posts)
 ![Screenshot](home.PNG)
 - Detalhes de um post (parte 1)
